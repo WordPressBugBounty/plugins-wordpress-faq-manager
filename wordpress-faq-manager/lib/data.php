@@ -1,16 +1,20 @@
 <?php
+
 /**
  * WP FAQ Manager - Data Module
  *
  * Various queries, functions, etc.
  *
- * @package WordPress FAQ Manager
+ * @package WP FAQ Manager
  */
+
+if (! defined('ABSPATH')) exit; // Exit if accessed directly
 
 /**
  * Start our engines.
  */
-class WPFAQ_Manager_Data {
+class WPFAQ_Manager_Data
+{
 
 	/**
 	 * Get a random FAQ for the sidebar widget.
@@ -19,10 +23,11 @@ class WPFAQ_Manager_Data {
 	 *
 	 * @return mixed           The array of post objects or false.
 	 */
-	public static function get_random_widget_faqs( $count = 1 ) {
+	public static function get_random_widget_faqs($count = 1)
+	{
 
 		// Check for the transient first.
-		if ( false === $items = get_transient( 'wpfaq_widget_fetch_random' )  ) {
+		if (false === $items = get_transient('wpfaq_widget_fetch_random')) {
 
 			// Set my args.
 			$args   = array(
@@ -32,27 +37,27 @@ class WPFAQ_Manager_Data {
 			);
 
 			// Fetch the items.
-			$items  = get_posts( $args );
+			$items  = get_posts($args);
 
 			// Set an empty transient if we have none.
-			if ( ! $items ) {
+			if (! $items) {
 
 				// Set the transient time to an hour.
-				set_transient( 'wpfaq_widget_fetch_random', '', HOUR_IN_SECONDS );
+				set_transient('wpfaq_widget_fetch_random', '', HOUR_IN_SECONDS);
 
 				// And return false.
 				return false;
 			}
 
 			// Set the transient time to an hour.
-			set_transient( 'wpfaq_widget_fetch_random', $items, DAY_IN_SECONDS );
+			set_transient('wpfaq_widget_fetch_random', $items, DAY_IN_SECONDS);
 		}
 
 		// Shuffle the array data.
-		shuffle( $items );
+		shuffle($items);
 
 		// Return the requested number of items.
-		return array_slice( $items, 0, absint( $count ), true );
+		return array_slice($items, 0, absint($count), true);
 	}
 
 	/**
@@ -62,33 +67,34 @@ class WPFAQ_Manager_Data {
 	 *
 	 * @return mixed           The array of post objects or false.
 	 */
-	public static function get_recent_widget_faqs( $count = 5 ) {
+	public static function get_recent_widget_faqs($count = 5)
+	{
 
 		// Check for the transient first.
-		if ( false === $items = get_transient( 'wpfaq_widget_fetch_recent' )  ) {
+		if (false === $items = get_transient('wpfaq_widget_fetch_recent')) {
 
 			// Set my args.
 			$args   = array(
 				'post_type'       => 'question',
-				'posts_per_page'  => absint( $count ),
+				'posts_per_page'  => absint($count),
 				'post_status'     => 'publish',
 			);
 
 			// Fetch the items.
-			$items  = get_posts( $args );
+			$items  = get_posts($args);
 
 			// Set an empty transient if we have none.
-			if ( ! $items ) {
+			if (! $items) {
 
 				// Set the transient time to an hour.
-				set_transient( 'wpfaq_widget_fetch_recent', '', HOUR_IN_SECONDS );
+				set_transient('wpfaq_widget_fetch_recent', '', HOUR_IN_SECONDS);
 
 				// And return false.
 				return false;
 			}
 
 			// Set the transient time to an hour.
-			set_transient( 'wpfaq_widget_fetch_recent', $items, WEEK_IN_SECONDS );
+			set_transient('wpfaq_widget_fetch_recent', $items, WEEK_IN_SECONDS);
 		}
 
 		// Return the items.
@@ -106,26 +112,27 @@ class WPFAQ_Manager_Data {
 	 *
 	 * @return array           The array of post objects or false.
 	 */
-	public static function get_main_shortcode_faqs( $id = 0, $count = 10, $topics = array(), $tags = array(), $paged = 1 ) {
+	public static function get_main_shortcode_faqs($id = 0, $count = 10, $topics = array(), $tags = array(), $paged = 1)
+	{
 
 		// If we have a single ID, do that lookup first.
-		if ( ! empty( $id ) ) {
+		if (! empty($id)) {
 
 			// Confirm the post type and return false if it isn't an FAQ.
-			if ( 'question' !== get_post_type( $id ) ) {
+			if ('question' !== get_post_type($id)) {
 				return false;
 			}
 
 			// Get the data.
-			$item   = get_post( $id );
+			$item   = get_post($id);
 
 			// Bail if the data isn't an object, or isn't published.
-			if ( ! is_object( $item ) || empty( $item->post_status ) || 'publish' !== esc_attr( $item->post_status ) ) {
+			if (! is_object($item) || empty($item->post_status) || 'publish' !== esc_attr($item->post_status)) {
 				return false;
 			}
 
 			// Return the data set as an array.
-			return array( $item );
+			return array($item);
 		}
 
 		// Set my base primary args.
@@ -138,17 +145,17 @@ class WPFAQ_Manager_Data {
 
 		// If we are using the "all" feature, set the args with that.
 		// Otherwise, use the paged and posts_per_page setup.
-		if ( 'all' === $count || $count < 0 ) {
-			$args   = wp_parse_args( array( 'nopaging' => true, 'paged' => $paged ), $base );
+		if ('all' === $count || $count < 0) {
+			$args   = wp_parse_args(array('nopaging' => true, 'paged' => $paged), $base);
 		} else {
-			$args   = wp_parse_args( array( 'posts_per_page' => absint( $count ), 'paged' => $paged ), $base );
+			$args   = wp_parse_args(array('posts_per_page' => absint($count), 'paged' => $paged), $base);
 		}
 
 		// Set a tax query array.
 		$tq = array();
 
 		// Check for topics passed.
-		if ( ! empty( $topics ) ) {
+		if (! empty($topics)) {
 
 			// Set the query portion.
 			$tq[]   = array(
@@ -159,7 +166,7 @@ class WPFAQ_Manager_Data {
 		}
 
 		// Check for tags passed.
-		if ( ! empty( $tags ) ) {
+		if (! empty($tags)) {
 
 			// Set the query portion.
 			$tq[]   = array(
@@ -170,20 +177,20 @@ class WPFAQ_Manager_Data {
 		}
 
 		// Add the args if we have them.
-		if ( ! empty( $tq ) ) {
+		if (! empty($tq)) {
 
 			// Set the merge relation.
-			$taxq   = array_merge( array( 'relation' => 'OR' ), $tq );
+			$taxq   = array_merge(array('relation' => 'OR'), $tq);
 
 			// And do the actual parsing.
-			$args   = wp_parse_args( array( 'tax_query' => array( $taxq ) ), $args );
+			$args   = wp_parse_args(array('tax_query' => array($taxq)), $args);
 		}
 
 		// Fetch the items.
-		$items  = get_posts( $args );
+		$items  = get_posts($args);
 
 		// Return the items if we have them, or false.
-		return ! empty( $items ) ? $items : false;
+		return ! empty($items) ? $items : false;
 	}
 
 	/**
@@ -195,26 +202,27 @@ class WPFAQ_Manager_Data {
 	 *
 	 * @return array           The array of post objects or false.
 	 */
-	public static function get_combo_shortcode_faqs( $id = 0, $topics = array(), $tags = array() ) {
+	public static function get_combo_shortcode_faqs($id = 0, $topics = array(), $tags = array())
+	{
 
 		// If we have a single ID, do that lookup first.
-		if ( ! empty( $id ) ) {
+		if (! empty($id)) {
 
 			// Confirm the post type and return false if it isn't an FAQ.
-			if ( 'question' !== get_post_type( $id ) ) {
+			if ('question' !== get_post_type($id)) {
 				return false;
 			}
 
 			// Get the data.
-			$item   = get_post( $id );
+			$item   = get_post($id);
 
 			// Bail if the data isn't an object, or isn't published.
-			if ( ! is_object( $item ) || empty( $item->post_status ) || 'publish' !== esc_attr( $item->post_status ) ) {
+			if (! is_object($item) || empty($item->post_status) || 'publish' !== esc_attr($item->post_status)) {
 				return false;
 			}
 
 			// Return the data set as an array.
-			return array( $item );
+			return array($item);
 		}
 
 		// Set my primary args.
@@ -230,7 +238,7 @@ class WPFAQ_Manager_Data {
 		$tq = array();
 
 		// Check for topics passed.
-		if ( ! empty( $topics ) ) {
+		if (! empty($topics)) {
 
 			// Set the query portion.
 			$tq[]   = array(
@@ -241,7 +249,7 @@ class WPFAQ_Manager_Data {
 		}
 
 		// Check for tags passed.
-		if ( ! empty( $tags ) ) {
+		if (! empty($tags)) {
 
 			// Set the query portion.
 			$tq[]   = array(
@@ -252,20 +260,20 @@ class WPFAQ_Manager_Data {
 		}
 
 		// Add the args if we have them.
-		if ( ! empty( $tq ) ) {
+		if (! empty($tq)) {
 
 			// Set the merge relation.
-			$taxq   = array_merge( array( 'relation' => 'OR' ), $tq );
+			$taxq   = array_merge(array('relation' => 'OR'), $tq);
 
 			// And do the actual parsing.
-			$args   = wp_parse_args( array( 'tax_query' => array( $taxq ) ), $args );
+			$args   = wp_parse_args(array('tax_query' => array($taxq)), $args);
 		}
 
 		// Fetch the items.
-		$items  = get_posts( $args );
+		$items  = get_posts($args);
 
 		// Return the items if we have them, or false.
-		return ! empty( $items ) ? $items : false;
+		return ! empty($items) ? $items : false;
 	}
 
 	/**
@@ -275,16 +283,14 @@ class WPFAQ_Manager_Data {
 	 *
 	 * @return array           The array of term objects or false.
 	 */
-	public static function get_tax_shortcode_terms( $term = '' ) {
-
-		// Filter the available args.
-		$args    = apply_filters( 'wpfaq_taxlist_shortcode_args', array( 'hide_empty' => false ), $term );
+	public static function get_tax_shortcode_terms($term = '')
+	{
 
 		// Fetch my terms.
-		$terms   = get_terms( array( $term ), $args );
+		$terms   = get_terms(array($term));
 
 		// Return the terms if we have them, or false.
-		return empty( $terms ) || is_wp_error( $terms ) ? false : $terms;
+		return empty($terms) || is_wp_error($terms) ? false : $terms;
 	}
 
 	/**
@@ -294,52 +300,55 @@ class WPFAQ_Manager_Data {
 	 *
 	 * @return int     $count   The number of FAQs
 	 */
-	public static function get_total_faq_count( $divide = 0 ) {
+	public static function get_total_faq_count($divide = 0)
+	{
 
 		// Check for the transient first.
-		if ( false === $count = get_transient( 'wpfaq_total_faq_count' )  ) {
+		if (false === $count = get_transient('wpfaq_total_faq_count')) {
 
 			// Call the global database.
 			global $wpdb;
 
 			// Set up our query.
-			$query  = $wpdb->prepare("
-				SELECT  ID
-				FROM    $wpdb->posts
-				WHERE   post_type = '%s'
-				AND     post_status = '%s'
-			", esc_sql( 'question' ), esc_sql( 'publish' ) );
+			$data = get_posts(
+				array(
+					'post_type'      => 'question',
+					'post_status'    => 'publish',
+					'fields'         => 'ids',
+					'posts_per_page' => -1,
+					'no_found_rows'  => true,
+				)
+			);
 
-			// Fetch the column.
-			$data  = $wpdb->get_col( $query );
+
 
 			// Set an empty transient if we have none.
-			if ( empty( $data ) ) {
+			if (empty($data)) {
 
 				// Set the transient time to an hour.
-				set_transient( 'wpfaq_total_faq_count', 0, HOUR_IN_SECONDS );
+				set_transient('wpfaq_total_faq_count', 0, HOUR_IN_SECONDS);
 
 				// And return false.
 				return false;
 			}
 
 			// Do our count.
-			$count = count( $data );
+			$count = count($data);
 
 			// Set the transient time to an hour.
-			set_transient( 'wpfaq_total_faq_count', $count, DAY_IN_SECONDS );
+			set_transient('wpfaq_total_faq_count', $count, DAY_IN_SECONDS);
 		}
 
 		// If we aren't calculating anything, just return the value.
-		if ( empty( $divide ) ) {
+		if (empty($divide)) {
 			return $count;
 		}
 
 		// If we are doing math, math it up.
-		$calcd  = $count / absint( $divide );
+		$calcd  = $count / absint($divide);
 
 		// Return the number, calculated up.
-		return ceil( $calcd );
+		return ceil($calcd);
 	}
 
 	/**
@@ -347,10 +356,11 @@ class WPFAQ_Manager_Data {
 	 *
 	 * @return mixed           The array of post objects or false.
 	 */
-	public static function get_admin_faqs() {
+	public static function get_admin_faqs()
+	{
 
 		// Check for the transient first.
-		if ( false === $items = get_transient( 'wpfaq_admin_fetch_faqs' )  ) {
+		if (false === $items = get_transient('wpfaq_admin_fetch_faqs')) {
 
 			// Set my args.
 			$args   = array(
@@ -362,20 +372,20 @@ class WPFAQ_Manager_Data {
 			);
 
 			// Fetch the items.
-			$items  = get_posts( $args );
+			$items  = get_posts($args);
 
 			// Set an empty transient if we have none.
-			if ( ! $items ) {
+			if (! $items) {
 
 				// Set the transient time to an hour.
-				set_transient( 'wpfaq_admin_fetch_faqs', '', HOUR_IN_SECONDS );
+				set_transient('wpfaq_admin_fetch_faqs', '', HOUR_IN_SECONDS);
 
 				// And return false.
 				return false;
 			}
 
 			// Set the transient time to an hour.
-			set_transient( 'wpfaq_admin_fetch_faqs', $items, WEEK_IN_SECONDS );
+			set_transient('wpfaq_admin_fetch_faqs', $items, WEEK_IN_SECONDS);
 		}
 
 		// Return the items.
@@ -387,5 +397,3 @@ class WPFAQ_Manager_Data {
 
 // Call our class.
 new WPFAQ_Manager_Data();
-
-

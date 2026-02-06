@@ -1,17 +1,17 @@
-=== FAQ Manager ===
+=== SFN Easy FAQ Manager ===
 Contributors: curtismchale, norcross
 Tags: frequently asked questions, FAQ, shortcodes, custom post types
 Requires at least: 4.0
-Requires PHP: 7.4
-Tested up to: 6.1
-Stable tag: 2.0.2
-License: GPLv2 or later
+Requires PHP: 8.0
+Tested up to: 6.9
+Stable tag: 2.0.4.4
+License: GPL-2.0-or-later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Uses custom post types and taxonomies to manage an FAQ section for your site.
 
 == Description ==
-Uses custom post types and taxonomies to manage an FAQ section for your site. Includes a set of custom taxonomies to organize, and shortcode options for different display configurations. [See the FAQ section](http://wordpress.org/extend/plugins/wordpress-faq-manager/faq "See the FAQ section")  for complete setup options.
+Uses custom post types and taxonomies to manage an FAQ section for your site. Includes a set of custom taxonomies to organize, and shortcode options for different display configurations. [See the FAQ section](http://wordpress.org/plugins/wordpress-faq-manager/faq "See the FAQ section")  for complete setup options.
 
 == Installation ==
 
@@ -46,7 +46,7 @@ Each FAQ acts like a "post". You can assign your own categories (called topics) 
 * List all from multiple FAQ tags:
 	place [faq faq_tag="tag-slug-1, tag-slug-2"] on a post / page
 
-* List all from both FAQ topcis and FAQ tags:
+* List all from both FAQ topics and FAQ tags:
 	place [faq faq_topic="topic-slug-1" faq_tag="tag-slug-2"] on a post / page
 
 The list will show 10 FAQs based on your sorting (if none has been done, it will be in date order).
@@ -75,6 +75,30 @@ The list will show 10 FAQs based on your sorting (if none has been done, it will
 3. Example of expanded FAQs
 
 == Changelog ==
+
+=== 2.0.4.4 ===
+
+* got more strict about how we add our CPT to the main feed as we were overwriting other post types
+
+= 2.0.4.1 =
+
+* fixed a spelling mistake in readme
+* changed name after advice from plugin team
+
+= 2.0.4 =
+
+* more relaxed version of PHP supported to maintain backwards compatability a bit better
+
+= 2.0.3 =
+
+* updated Tested version
+* fixing direct file access
+* removed wpfaq_taxlist_shortcode_args filter as it was used in a deprecated way with get_terms
+* fixed internationalizaton strings
+* updated data sanitization for sorting FAQ save function
+* hardened escaping in widgets and instructions page
+* fixed a bunch of AJAX calls
+* fixed direct database calls to use built in WP functions
 
 = 2.0.2 =
 
